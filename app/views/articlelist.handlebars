@@ -1,0 +1,18 @@
+<div class="col-md-12">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Headlines</h3>
+        </div>
+        <div class="panel-body">
+            <div class="list-group">
+                {{#each headline}}
+                    <a href="/notes/{{@id}}{{this.id}}" class="list-group-item">{{@headline}}{{this.title}}</a>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    console.log({{headline.title}});
+</script>

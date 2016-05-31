@@ -3,10 +3,14 @@ var Schema = mongoose.Schema;
 
 var NoteSchema = new Schema({
     title: {
-        type:String
+        type:String,
+        unique: true,
+        required: true
     },
-    body: {
-        type:String
+    body:
+    {
+        type:String,
+        required: false
     }
 });
 

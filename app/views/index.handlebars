@@ -1,0 +1,63 @@
+<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Take Notes</h3>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <textarea class="form-control" rows="5" id="comment"></textarea>
+            </div>
+            <button type="button" class="btn btn-success">Success</button>
+
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 id="articleTitle" class="panel-title">{{title}}</h3>
+        </div>
+        <div class="panel-body">
+            {{text}}
+        </div>
+    </div>
+</div>
+
+<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">Saved Notes</h3>
+        </div>
+        <div class="panel-body">
+            {{savedNote}}
+        </div>
+    </div>
+</div>
+
+<script>
+    var noteData = '';
+
+    $('.btn-success').on('click', function(){
+        var note = $('.form-control').val().trim();
+        var noteTitle = "{{title}}";
+        console.log(note);
+        $('.form-control').val('');
+
+        var noteData = {
+            note: note,
+            title: noteTitle
+        };
+
+        var currentURL = window.location.origin;
+
+        $.post(currentURL + "/", noteData,
+                function(data){
+
+                });
+        console.log("note data");
+        console.log(noteData);
+    });
+
+
+</script>

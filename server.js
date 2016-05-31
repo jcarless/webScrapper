@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static('public'));
 
 //Database configuration
-mongoose.connect('mongodb://localhost/webscrapper');
+mongoose.connect('mongodb://admin:admin@ds057954.mlab.com:57954/businessnewsscrapperdb');
 var db = mongoose.connection;
 
 db.on('error', function (err) {
@@ -24,6 +24,21 @@ db.on('error', function (err) {
 db.once('open', function () {
     console.log('Mongoose connection successful.');
 });
+
+// set up handlebars for express
+var exphbs = require('express-handlebars');
+app.engine('handlebars', exphbs({
+    defaultLayout: 'main',
+    extname: '.handlebars',
+    layoutsDir: 'app/views/layout'
+}));
+
+app.set('view engine', 'handlebars');
+app.set('views', __dirname + '/app/views');
+
+// load the static files
+var staticContentFolder = __dirname + '/app/public';
+app.use(express.static(staticContentFolder));
 
 //routing
 require("./app/routes/routes.js")(app);
