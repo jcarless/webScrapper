@@ -34,7 +34,7 @@ module.exports = function(app) {
 
             });
 
-    });
+    }); //get
 
 
     app.get('/scrape', function(req, res) {
@@ -50,33 +50,22 @@ module.exports = function(app) {
                 result.link = "www.cnbc.com" + linkRaw;
 
 
-
-
-                // request("'" + result.link + "'", function(error, response, html){
-                //     $ = cheerio.load(html);
-                //    $('div.group').each(function(i, element){
-                //        result.text = $(this).children('p').text();
-                //        console.log(result);
-                //
-                //    })
-                // });
-
                 console.log(result);
 
 
-                noteResult.title = result.title;
-                noteResult.body = ' ';
-
-
-                var newNote = new Note (noteResult);
-
-                newNote.save(function(err, doc) {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log(doc);
-                    }
-                });
+                // noteResult.title = result.title;
+                // noteResult.body = ' ';
+                //
+                //
+                // var newNote = new Note (noteResult);
+                //
+                // newNote.save(function(err, doc) {
+                //     if (err) {
+                //         console.log(err);
+                //     } else {
+                //         console.log(doc);
+                //     }
+                // });
 
                 var entry = new Article (result);
 
@@ -88,14 +77,10 @@ module.exports = function(app) {
                     }
                 });
 
-                
-                
-
-
             }); //each
         }); //request
         res.redirect('/')
-    });
+    }); //get
 
 
     app.get('/', function(req, res){
@@ -110,13 +95,14 @@ module.exports = function(app) {
                 });
                 console.log(headlines);
             });
-    });
+    }); //get
 
     app.get('/notes/:id', function(req, res){
 
         Article.findOne({
             _id: req.params.id
         })
+            .populate('note')
             .exec(function(err, article) {
                 if(err) {
                     console.log(err);
@@ -130,31 +116,39 @@ module.exports = function(app) {
 
                     }); //request
                     console.log("text: " + articleText);
+                    console.log(article.note[0]);
 
                     res.render('index', {
                         title: article.title,
                         text: articleText,
                         savedNote: article.note
-                    });                }
+                    });
+                }
             });
 
-        app.post('/notes/id', function(req, res){
-            console.log(req.params.id);
-            Note.findOneAndUpdate({
-                    title: req.body.title},
-                {$set:
-                {note: req.body.note}},
-                {upsert: true},
-                function(err, note){
-                    if(err){
-                        console.log(err);
-                    }else{
-                        console.log(note);
-                        res.send(note);
-                    }
-                }
-            );
+        app.post('/notes/:id', function(req, res){
 
+            var newNote = new Note(req.body);
+            console.log(req.body);
+            //Save the new note
+            newNote.save(function(err, doc) {
+                console.log('doc');
+                console.log(doc);
+                if (err) {
+                    res.send(err);
+                } else {
+                    //Find our user and push the new note id into the User's notes array
+                    Article.findOneAndUpdate({}, {$push: {'note': doc._id}}, {new: true}, function(err, doc) {
+                        if (err) {
+                            res.send(err);
+                        } else {
+                            res.send(doc);
+                            console.log("doc body: " + doc.body);
+                        }
+                    });
+
+                }
+            });
 
         });
 

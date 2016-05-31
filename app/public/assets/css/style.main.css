@@ -1,6 +1,28 @@
-/*body {*/
-    /*background-image: url("../images/download.png");*/
-/*}*/
-input{
-    height: 500px;
+body {
+    background: url(../images/NYSE.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
 }
+
+/*input{*/
+    /*height: 500px;*/
+/*}*/
+
+/*.jumbotron{*/
+    /*background-color: rgba(73, 73, 163, 0.94);*/
+    /*color: rgb(23, 23, 23);*/
+/*}*/
+
+/*.btn{*/
+    /*!*background: rgb(255, 76, 61);*!*/
+/*}*/
+
+/*.panel{*/
+    /*!*background-color: rgba(73, 73, 163, 0.38);*!*/
+/*}*/
+
+/*.panel-heading{*/
+    /*!*color: rgba(73, 73, 163, 0.94);*!*/
+/*}*/

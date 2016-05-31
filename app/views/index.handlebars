@@ -7,7 +7,7 @@
             <div class="form-group">
                 <textarea class="form-control" rows="5" id="comment"></textarea>
             </div>
-            <button type="button" class="btn btn-success">Success</button>
+            <button type="button" class="btn btn-success">Save</button>
 
         </div>
     </div>
@@ -30,7 +30,9 @@
             <h3 class="panel-title">Saved Notes</h3>
         </div>
         <div class="panel-body">
-            {{savedNote}}
+            {{#each savedNote}}
+            <button>{{this}}</button>
+            {{/each}}
         </div>
     </div>
 </div>
@@ -51,7 +53,7 @@
 
         var currentURL = window.location.origin;
 
-        $.post(currentURL + "/", noteData,
+        $.post(currentURL + "/notes/:id", noteData,
                 function(data){
 
                 });
