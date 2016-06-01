@@ -108,6 +108,8 @@ module.exports = function(app) {
                 //res.send('error occured')
                 return callback(err);
             } else {
+                var url = article.link;
+                console.log('url: ' + url);
                 request("http://www.cnbc.com/2016/05/30/feds-bullard-says-global-markets-seem-well-prepared-for-summer-rate-hike.html", function(error, response, html){
                     if(error) {
                         console.log(error);
@@ -121,7 +123,13 @@ module.exports = function(app) {
                              articleText = $(this).children('p').text();
                              data.articleText += articleText;                           
                         });
-                        data.notes.push(article.note[0].body);
+                        if(article.note.length > 0) {
+                            data.notes.push(article.note[0].body);
+
+                            console.log(article.note[0].body);
+                            console.log(article.note.length);
+                            console.log(data.notes);
+                        }
                         res.render('index', {
                             title: data.article.title,
                             text: data.articleText,
@@ -149,8 +157,8 @@ module.exports = function(app) {
                     if (err) {
                         res.send(err);
                     } else {
+                        console.log(err);
                         res.send(doc);
-                        console.log("doc body: " + doc.body);
                     }
                 });
             }
