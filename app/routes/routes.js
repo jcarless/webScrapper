@@ -2,7 +2,6 @@ var request = require('request');
 var cheerio = require('cheerio');
 var Note = require('../model/Note.js');
 var Article = require('../model/Article.js');
-var ArticleGetter = require('../../ArticleGetter.js');
 module.exports = function(app) {
     var articleText;
 
@@ -99,14 +98,39 @@ module.exports = function(app) {
     }); //get
 
     app.get('/notes/:id', function(req, res){
-        ArticleGetter.GetArticle(req.params.id, function(err,data){
-            var savedNotes = data.notes;
-            return res.render('index', {
-                title: data.article.title,
-                text: data.articleText,
-                savedNote: savedNotes
-            });       
-        });
+        Article.findOne({
+            _id: req.params.id
+        })
+        .populate('note')
+        .exec(function(err, article) {
+            if(err) {
+                console.log(err);
+                //res.send('error occured')
+                return callback(err);
+            } else {
+                request("http://www.cnbc.com/2016/05/30/feds-bullard-says-global-markets-seem-well-prepared-for-summer-rate-hike.html", function(error, response, html){
+                    if(error) {
+                        console.log(error);
+                        //res.send('error occured')
+                        return callback(error);
+                    } else {
+                        var $ = cheerio.load(html);
+                        var data = {articleText:'',notes:[]};
+                        data.article=article;
+                        $('div.group').each(function(i, element){
+                             articleText = $(this).children('p').text();
+                             data.articleText += articleText;                           
+                        });
+                        data.notes.push(article.note[0].body);
+                        res.render('index', {
+                            title: data.article.title,
+                            text: data.articleText,
+                            savedNote: data.notes
+                            });
+                    }
+                }); //request
+            } //if/then/else
+        }); //exec
     });
 
     app.post('/notes/:id', function(req, res){
