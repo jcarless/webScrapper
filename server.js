@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({
 app.use(express.static('public'));
 
 //Database configuration
-mongoose.connect('mongodb://admin:admin@ds057954.mlab.com:57954/businessnewsscrapperdb');
+mongoose.connect('mongodb://admin:admin@ds021663.mlab.com:21663/heroku_q3z6l55v');
 var db = mongoose.connection;
 
 db.on('error', function (err) {
