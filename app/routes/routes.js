@@ -2,8 +2,9 @@ var request = require('request');
 var cheerio = require('cheerio');
 var Note = require('../model/Note.js');
 var Article = require('../model/Article.js');
-var articleText = '';
+var ArticleGetter = require('../../ArticleGetter.js');
 module.exports = function(app) {
+    var articleText;
 
 
     app.get('/notes', function(req, res){
@@ -25,11 +26,11 @@ module.exports = function(app) {
                     }); //request
                     console.log("text: " + articleText);
 
-                    res.render('index', {
-                        title: article[0].title,
-                        text: articleText,
-                        savedNote: article[0].note
-                    });
+                    // res.render('index', {
+                    //     title: article[0].title,
+                    //     text: articleText,
+                    //     savedNote: article[0].note
+                    // });
                 }
 
             });
@@ -98,62 +99,39 @@ module.exports = function(app) {
     }); //get
 
     app.get('/notes/:id', function(req, res){
-
-        Article.findOne({
-            _id: req.params.id
-        })
-            .populate('note')
-            .exec(function(err, article) {
-                if(err) {
-                    console.log(err);
-                    res.send('error occured')
-                } else {
-                    request("http://www.cnbc.com/2016/05/30/feds-bullard-says-global-markets-seem-well-prepared-for-summer-rate-hike.html", function(error, response, html){
-                        var $ = cheerio.load(html);
-                        $('div.group').each(function(i, element){
-                            articleText = $(this).children('p').text();
-                        });
-
-                    }); //request
-                    console.log("text: " + articleText);
-                    console.log(article.note[0]);
-
-                    res.render('index', {
-                        title: article.title,
-                        text: articleText,
-                        savedNote: article.note
-                    });
-                }
-            });
-
-        app.post('/notes/:id', function(req, res){
-
-            var newNote = new Note(req.body);
-            console.log(req.body);
-            //Save the new note
-            newNote.save(function(err, doc) {
-                console.log('doc');
-                console.log(doc);
-                if (err) {
-                    res.send(err);
-                } else {
-                    //Find our user and push the new note id into the User's notes array
-                    Article.findOneAndUpdate({}, {$push: {'note': doc._id}}, {new: true}, function(err, doc) {
-                        if (err) {
-                            res.send(err);
-                        } else {
-                            res.send(doc);
-                            console.log("doc body: " + doc.body);
-                        }
-                    });
-
-                }
-            });
-
+        ArticleGetter.GetArticle(req.params.id, function(err,data){
+            var savedNotes = data.notes;
+            return res.render('index', {
+                title: data.article.title,
+                text: data.articleText,
+                savedNote: savedNotes
+            });       
         });
-
     });
 
+    app.post('/notes/:id', function(req, res){
+
+        var newNote = new Note(req.body);
+        console.log(req.body);
+        //Save the new note
+        newNote.save(function(err, doc) {
+            console.log('doc');
+            console.log(doc);
+            if (err) {
+                res.send(err);
+            } else {
+                //Find our user and push the new note id into the User's notes array
+                Article.findOneAndUpdate({}, {$push: {'note': doc._id}}, {new: true}, function(err, doc) {
+                    if (err) {
+                        res.send(err);
+                    } else {
+                        res.send(doc);
+                        console.log("doc body: " + doc.body);
+                    }
+                });
+            }
+        });
+    });
 
 
 
