@@ -5,8 +5,8 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 var request = require('request');
 var cheerio = require('cheerio');
-var Note = require('./app/model/Note.js');
-var Article = require('./app/model/Article.js');
+var Note = require('./app/Model/Note.js');
+var Article = require('./app/Model/Article.js');
 
 app.use(logger('dev'));
 app.use(bodyParser.urlencoded({
